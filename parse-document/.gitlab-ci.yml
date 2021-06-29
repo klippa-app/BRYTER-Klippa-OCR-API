@@ -1,0 +1,89 @@
+.parse-document_integration_job:
+  extends: .except_schedules
+  variables:
+    INTEGRATION_NAME: parse-document
+    CURRENT_INTEGRATION_DIR: kotlin-jvm/parse-document
+    TAG_VERSION: 0.0.1
+  before_script:
+    - cd kotlin-jvm
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - kotlin-jvm/parse-document/src/**/*
+      - kotlin-jvm/parse-document/.gitlab-ci.yml
+      - kotlin-jvm/parse-document/build.gradle.kts
+      - kotlin-jvm/Dockerfile
+
+Test Parse-document Integration:
+  extends: .parse-document_integration_job
+  stage: test
+  image: amazoncorretto:11
+  script:
+    - ./gradlew :parse-document:check
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - "kotlin-jvm/build/reports/tests/test"
+      - "kotlin-jvm/*/build/reports/tests/test"
+    reports:
+      junit:
+        - kotlin-jvm/*/build/test-results/test/*.xml
+
+Docker Test Parse-document Integration:
+  extends: .parse-document_integration_job
+  stage: verify
+  image: amazoncorretto:11
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - ./gradlew :parse-document:dockerTest
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - "kotlin-jvm/build/reports/tests/dockerTest"
+      - "kotlin-jvm/*/build/reports/tests/dockerTest"
+    reports:
+      junit:
+        - kotlin-jvm/*/build/test-results/dockerTest/*.xml
+
+.parse-document_publish_step:
+  extends: .parse-document_integration_job
+  stage: publish
+  before_script:
+    - cd $CURRENT_INTEGRATION_DIR
+  image:
+    name: $KANIKO_CONTAINER_ID
+    entrypoint: [""]
+  variables:
+    AWS_ACCESS_KEY_ID: $OPERATIONS_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $OPERATIONS_AWS_SECRET_ACCESS_KEY
+    AWS_DEFAULT_REGION: eu-central-1
+
+Publish Parse-document Integration MR:
+  extends: .parse-document_publish_step
+  only:
+    refs:
+      - merge_requests
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"credHelpers\":{\"727543438143.dkr.ecr.eu-central-1.amazonaws.com\":\"ecr-login\"},\"auths\":{\"$OPERATIONS_AWS_REGISTRY_URL\":{\"username\":\"$OPERATIONS_AWS_ACCESS_KEY_ID\",\"password\":\"$OPERATIONS_AWS_SECRET_ACCESS_KEY\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $(pwd)/.. --dockerfile ./Dockerfile --build-arg=openfaas_integration_name=$INTEGRATION_NAME --destination $OPERATIONS_AWS_REGISTRY_URL/bryter-integration/$INTEGRATION_NAME:MR$CI_MERGE_REQUEST_IID-$CI_COMMIT_SHORT_SHA
+
+
+Publish Parse-document Integration:
+  extends: .parse-document_publish_step
+  only:
+    refs:
+      - master
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"credHelpers\":{\"727543438143.dkr.ecr.eu-central-1.amazonaws.com\":\"ecr-login\"},\"auths\":{\"$OPERATIONS_AWS_REGISTRY_URL\":{\"username\":\"$OPERATIONS_AWS_ACCESS_KEY_ID\",\"password\":\"$OPERATIONS_AWS_SECRET_ACCESS_KEY\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $(pwd)/.. --dockerfile ./Dockerfile --build-arg=openfaas_integration_name=$INTEGRATION_NAME --destination $OPERATIONS_AWS_REGISTRY_URL/bryter-integration/$INTEGRATION_NAME:$TAG_VERSION
