@@ -18,6 +18,7 @@ dependencies {
 
     implementation(http4k("core"))
     implementation(http4k("format-jackson"))
+    implementation(http4k("multipart"))
 
     testImplementation("io.bryter.integrations:kotlin-integrations-tests-lib:3.0.0")
     testImplementation(junit("engine"))
