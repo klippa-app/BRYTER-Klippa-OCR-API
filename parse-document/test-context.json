@@ -1,10 +1,8 @@
 {
     "env": {
-        "BRYTER_INTEGRATION_NAME": "parse-document-integration",
-        "base-url": "https://custom-ocr.klippa.com/api/v1"
+        "BRYTER_INTEGRATION_NAME": "parse-document-integration"
     },
     "secrets": {
-        "ocr-api-key": "your-api-key"
     },
     "hmac": false
 }

@@ -16,6 +16,20 @@ class ParseDocument(
     override val label: String = "Parse document"
 
     companion object {
+
+        val BASE_PATH = requiredStringInputField (
+            name = "base-path",
+            label = "Klippa OCR API base path",
+            description = "The base path to the Klippa API.",
+            placeholder = "https://custom-ocr.klippa.com/api/v1",
+        )
+
+        val API_KEY = requiredStringInputField (
+            name = "api-key",
+            label = "API Key",
+            description = "The auth key provided by Klippa",
+        )
+
         val DOCUMENT_URL = stringInputField(
             name = "document-url",
             label = "Document URL",
@@ -69,6 +83,8 @@ class ParseDocument(
     override fun getActionMetadata(context: ActionMetadataContext): Outcome<ActionMetadata> =
         with(context) {
             metadata
+                .inputField(BASE_PATH)
+                .inputField(API_KEY)
                 .inputField(DOCUMENT_URL)
                 .inputField(DOCUMENT_PATH)
                 .inputField(TEMPLATE)
@@ -84,13 +100,8 @@ class ParseDocument(
         with(context) {
             var body = MultipartFormBody()
 
-            val apiKey by lazy {
-                integrationContext.getSecretValue("ocr-api-key")
-            }
-
-            val basePath by lazy {
-                integrationContext.getEnvVar("base-url") + "/parseDocument"
-            }
+            val apiKey = inputs.string().required(API_KEY.name)
+            val basePath = inputs.string().required(BASE_PATH.name) + "/parseDocument"
 
             val filePath = inputs.file().optional(DOCUMENT_PATH.name)
             if (filePath != null && filePath.fileUrl.isNotEmpty()) {
