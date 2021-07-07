@@ -42,13 +42,13 @@ class ParseDocument(
             description = "The document to scan as a file path.",
         )
 
-        val TEMPLATE = requiredStringInputField(
+        val TEMPLATE = stringInputField(
             name = "template",
             label = "Template",
             description =  "The template to use for parsing. Empty for default parsing.",
         )
 
-        val PDF_TEXT_EXTRACTION = requiredStringInputField (
+        val PDF_TEXT_EXTRACTION = stringInputField (
             name = "pdf-text-extraction",
             label = "PDF Text extraction",
             description = "Use full when you want the best quality scan, use fast when you want fast scan results. Fast will try to extract the text from the PDF. Full will actually scan the full PDF, which is slower.",
@@ -114,13 +114,13 @@ class ParseDocument(
                 body = body.plus("url" to MultipartFormField(fileUrl))
             }
 
-            val template = inputs.string().required(TEMPLATE.name)
-            if (template.isNotEmpty()) {
+            val template = inputs.string().optional(TEMPLATE.name)
+            if (template != null && template.isNotEmpty()) {
                 body = body.plus("template" to MultipartFormField(template))
             }
 
-            val pdfTextExtraction = inputs.string().required(PDF_TEXT_EXTRACTION.name)
-            if (pdfTextExtraction.isNotEmpty()) {
+            val pdfTextExtraction = inputs.string().optional(PDF_TEXT_EXTRACTION.name)
+            if (pdfTextExtraction != null && pdfTextExtraction.isNotEmpty()) {
                 body = body.plus("pdf_text_extraction" to MultipartFormField(pdfTextExtraction))
             }
 
