@@ -18,7 +18,7 @@ Parse a document using the Klippa OCR API. Parses a GIF, PNG, JPG, HEIC/HEIF or 
 
 required: ``base-url``: ``https://custom-ocr.klippa.com/api/v1``
 
-required: ``api-key``: ``{your-api-key}`` e.g ``G6mfmadu93tNRDr6ed1VKDbLUR4rMWTE``
+required: ``api-key``: ``{your-api-key}``
 
 optional: ``document-url``: The document to scan as a file available at this URL.
 
