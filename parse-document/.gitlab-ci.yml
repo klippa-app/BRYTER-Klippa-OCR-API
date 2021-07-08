@@ -3,7 +3,7 @@
   variables:
     INTEGRATION_NAME: parse-document
     CURRENT_INTEGRATION_DIR: kotlin-jvm/parse-document
-    TAG_VERSION: 0.0.2
+    TAG_VERSION: 1.0.0
   before_script:
     - cd kotlin-jvm
   only:
