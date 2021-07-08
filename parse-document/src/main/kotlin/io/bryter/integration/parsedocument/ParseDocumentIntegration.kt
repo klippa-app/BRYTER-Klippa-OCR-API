@@ -15,16 +15,4 @@ class ParseDocumentIntegration(
 
     override val actions: List<ExecutableAction> = listOf(ParseDocument(createDefaultApiClient("KlippaOCRApi")))
     override val dataSources: List<ExecutableDataSource> = listOf(PDFTextExtraction())
-
-    // extract expected secrets which should be documented in the README.md
-    private val exampleSecret by lazy {
-        integrationContext.getSecretValue("parse-document-key") // You can also extract in actions or data sources
-    }
-
-    // extract expected environment variables which should be documented in the README.md
-    private val exampleEnvVar by lazy {
-        integrationContext.getEnvVar("parse-document-env-var").also {
-            logger.debug { "Got Env var value of 'parse-document-env-var': '$it'" }
-        }
-    }
 }
