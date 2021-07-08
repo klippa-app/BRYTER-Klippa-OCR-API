@@ -9,8 +9,8 @@ const val PDF_TEXT_EXTRACTION_SOURCE_ID = "pdf-text-extraction"
 
 class PDFTextExtraction : ExecutableDataSource {
     override val id: String = PDF_TEXT_EXTRACTION_SOURCE_ID
-    override val description: String = ""
-    override val label: String = ""
+    override val description: String = "The method to use when extracting text from a PDF."
+    override val label: String = "PDF text extraction method"
 
     override fun execute(context: DataSourceExecutionContext): Outcome<DataSourceOutput> {
         context.output.item("Fast", "fast")
