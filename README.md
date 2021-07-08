@@ -18,7 +18,7 @@ Parse a document using the Klippa OCR API. Parses a GIF, PNG, JPG, HEIC/HEIF or 
 
 required: ``base-url``: ``https://custom-ocr.klippa.com/api/v1``
 
-required: ``api-key``: ``{your-api-key}``
+required: ``api-key``: ``{your-api-key}`` e.g ``G6mfmadu93tNRDr6ed1VKDbLUR4rMWTE``
 
 optional: ``document-url``: The document to scan as a file available at this URL.
 
@@ -30,9 +30,9 @@ optional: ``pdf-text-extraction``: Use full when you want the best quality scan,
 
 optional: ``user-data``: Extra metadata in JSON format to give to the parser. Only works with templates that are configured to accept user data.
 
-optional: ``user-data-external-id``: The external ID of the user data set.
+optional: ``user-data-external-id``: The external IDs to filter on. Separated by a comma. When no external IDs are given, items of all external ids are returned. e.g ``2317``
 
-optional: ``hash-duplicate-group-id``: An identifier to use when saving/detecting hash duplicates. This way you can allow to have the same document scanned more than once for multiple groups. When doing a scan, the combination of the Hash Group ID and the document Hash will be used to detect duplicates. This value is saved hashed on our side. Common use cases: Company ID, Campaign ID, User ID.
+optional: ``hash-duplicate-group-id``: An identifier to use when saving/detecting hash duplicates. This way you can allow to have the same document scanned more than once for multiple groups. When doing a scan, the combination of the Hash Group ID and the document Hash will be used to detect duplicates. This value is saved hashed on our side. Common use cases: ``Company ID``, ``Campaign ID``, ``User ID``.
 
 **Output field:**
 
